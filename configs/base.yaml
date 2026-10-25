@@ -1,0 +1,23 @@
+# CEM Base Configuration
+model:
+  vocab_size: 10000
+  char_vocab_size: 256
+  latent_dim: 512
+  action_dim: 64
+  max_loops: 4
+  dropout: 0.1
+
+training:
+  batch_size: 32
+  learning_rate: 0.0001  # 1e-4
+  epochs: 20
+  max_seq_len: 128
+  weight_decay: 0.01
+  clip_grad_norm: 1.0
+  save_every: 1
+  log_every: 10
+
+paths:
+  data_path: "data/dataset.json"
+  output_dir: "checkpoints/base"
+  log_file: "logs/base_train.log"

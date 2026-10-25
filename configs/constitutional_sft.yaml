@@ -1,0 +1,18 @@
+# Constitutional AI Stage 1 → SFT on revised responses
+phase: sft
+model:
+  vocab_size: 256
+  latent_dim: 128
+  action_dim: 64
+  max_loops: 3
+training:
+  batch_size: 2
+  learning_rate: 0.0001
+  epochs: 2
+  max_seq_len: 128
+  weight_decay: 0.01
+  clip_grad_norm: 1.0
+paths:
+  data_path: data/raw/constitutional_sft.jsonl
+  output_dir: checkpoints/constitutional_sft
+  log_file: logs/constitutional_sft.log

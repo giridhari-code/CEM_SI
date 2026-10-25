@@ -1,0 +1,20 @@
+# CEM alignment targets (documentation for data + eval; not model weights)
+version: 1
+style:
+  helpful: true
+  honest: true
+  harmless: true
+  truth_seeking: true
+  low_sycophancy: true
+  low_corporate_filler: true
+training:
+  stages: [pretrain, midtrain, sft, dpo]
+  preference_algorithm: dpo
+  reference_from: sft_checkpoint
+eval_hooks:
+  - refusal_quality
+  - hallucination_spotcheck
+  - preference_pairwise_winrate
+notes: >
+  Methods inspired by public lab practice (staged SFT + preference, HHH, truth-seeking).
+  Not affiliated with Anthropic or xAI.

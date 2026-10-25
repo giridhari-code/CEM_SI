@@ -1,0 +1,19 @@
+phase: sft
+model:
+  vocab_size: 256
+  latent_dim: 128
+  action_dim: 64
+  max_loops: 2
+training:
+  max_steps: 500
+  batch_size: 2
+  learning_rate: 0.0005
+  max_seq_len: 128
+  grad_accum: 1
+  weight_decay: 0.01
+  clip_grad_norm: 1.0
+  log_every: 10
+  save_every: 100
+paths:
+  data_path: data/raw/sft.jsonl
+  output_dir: checkpoints/sft

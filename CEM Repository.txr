@@ -1,0 +1,86 @@
+cem-project/
+│
+├── cem/                        # Main Python Package (Source Code)
+│   ├── __init__.py             # Exposes main classes
+│   ├── config.py               # Data classes (Hyperparameters, Configs)
+│   │
+│   ├── layers/                 # Saare 8 Layers (L1 se L8) ka code
+│   │   ├── __init__.py
+│   │   ├── l1_io.py            # L1: Multimodal I/O (Text, Voice, Image)
+│   │   ├── l1_5_fusion.py      # L1.5: Cross-Modal Fusion
+│   │   ├── l2_representation.py# L2: Unified Semantic Encoder
+│   │   ├── l3_predictive.py    # L3: Predictive Coding
+│   │   ├── l4_modularity.py    # L4: Expert Pool & Meta-Gating
+│   │   ├── l5_world_model.py   # L5: Transition & Causal GNN
+│   │   ├── l6_active_inference.py # L6: Controller
+│   │   ├── l7_metacognition.py # L7: Learned Confidence Head
+│   │   └── l8_consciousness.py # L8: Attention Broadcast & Self-Model
+│   │
+│   ├── core/                   # The Looped Core & Main Model
+│   │   ├── __init__.py
+│   │   ├── looped_core.py      # L3-L6 Loop logic (k-depth)
+│   │   └── model.py            # Main CEM class (Joins everything)
+│   │
+│   ├── memory/                 # Memory Systems
+│   │   ├── __init__.py
+│   │   ├── fast_memory.py      # (If needed based on architecture)
+│   │   └── state_cache.py      # Per-pass cache for Loop
+│   │
+│   └── utils/                  # Helper Functions
+│       ├── __init__.py
+│       ├── logger.py           # Logging setup
+│       ├── metrics.py          # Accuracy, Perplexity, etc.
+│       └── tokenizer.py        # Char-level / BPE wrapper
+│
+├── data/                       # Data Loading & Processing
+│   ├── __init__.py
+│   ├── dataset.py              # Custom PyTorch Dataset classes
+│   ├── dataloader.py           # DataLoader setup (multimodal)
+│   └── preprocess.py           # Text chunking, Audio MelSpec, Image resize
+│
+├── scripts/                    # Executable Scripts (Training, Testing)
+│   ├── train.py                # Main training loop (with L7/L8 loops)
+│   ├── evaluate.py             # Eval script
+│   └── inference.py            # Chat/Generate script
+│
+├── tests/                      # Unit Tests (Company Standard)
+│   ├── test_l1_io.py
+│   ├── test_fusion.py
+│   └── test_model.py
+│
+├── configs/                    # YAML/JSON Config Files
+│   ├── base.yaml               # Default hyperparameters
+│   └── tiny.yaml               # Small model for testing
+│
+├── requirements.txt            # Dependencies
+├── setup.py                    # Package installation
+└── README.md                   # Documentation
+
+
+
+
+cem/
+├── data_engineering/       # NEW: Data Cleaning, Dedup, PII, Tokenizer
+│   ├── dedup.py            # MinHash LSH
+│   ├── pii_scrubber.py     # Regex based PII removal
+│   ├── quality_filter.py   # Gopher rules, LangFilter
+│   └── bpe_tokenizer.py    # Token shard writer & encoder
+│
+├── architecture/           # NEW: LLM specific (RoPE, GQA, KV Cache)
+│   ├── rope.py             # Rotary Positional Embeddings
+│   ├── gqa_attention.py    # Grouped Query Attention
+│   └── kv_cache.py         # Inference KV Cache
+│
+├── infra/                  # NEW: Distributed Training & Checkpoints
+│   ├── fsdp_wrapper.py     # Fully Sharded Data Parallel
+│   ├── checkpoint_manager.py # Weights only saving (safetensors)
+│   └── trainer.py          # Micro-batching, Grad Accumulation, NaN Skip
+│
+├── post_training/          # NEW: RLHF, RLOO, DPO
+│   ├── reward_model.py     # Preference Judging
+│   ├── rloo.py             # RLOO Reward Design
+│   └── critique_revision.py# Constitutional AI logic
+│
+└── eval/                   # NEW: Evaluation & Gating
+    ├── harness.py          # Choice logprobs, Eval batching
+    └── model_registry.py   # Model Card generation & Gating

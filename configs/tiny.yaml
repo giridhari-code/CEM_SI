@@ -1,0 +1,21 @@
+phase: pretrain
+model:
+  vocab_size: 256
+  latent_dim: 64
+  action_dim: 32
+  max_loops: 1
+training:
+  max_steps: 50
+  batch_size: 2
+  learning_rate: 0.001
+  max_seq_len: 64
+  grad_accum: 1
+  weight_decay: 0.0
+  clip_grad_norm: 1.0
+  precision: fp32
+  log_every: 5
+  save_every: 25
+  seed: 42
+paths:
+  data_path: data/raw/pretrain.txt
+  output_dir: checkpoints/tiny

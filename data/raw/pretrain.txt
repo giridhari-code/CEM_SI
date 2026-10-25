@@ -1,0 +1,5 @@
+CEM is a cognitive emergence machine. It uses looped depth instead of fixed transformer blocks.
+The model thinks longer when prediction error is high and stops when meta-cognition is confident.
+English and Hindi mix: नमस्ते, this is a small pretrain corpus for smoke tests.
+Weather in Mumbai is often humid. Delhi winters are cold. Ops teams need clear status reports.
+Next token prediction teaches syntax and local patterns before instruction tuning.

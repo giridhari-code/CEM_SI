@@ -1,0 +1,19 @@
+# Constitutional AI Stage 2 style → preference / RLAIF-style DPO on CEM
+phase: dpo
+model:
+  vocab_size: 256
+  latent_dim: 128
+  action_dim: 64
+  max_loops: 3
+training:
+  batch_size: 1
+  learning_rate: 0.00005
+  epochs: 1
+  max_seq_len: 128
+  weight_decay: 0.0
+  clip_grad_norm: 1.0
+  beta: 0.1
+paths:
+  data_path: data/raw/rlaif_prefs.jsonl
+  output_dir: checkpoints/rlaif_dpo
+  log_file: logs/rlaif_dpo.log

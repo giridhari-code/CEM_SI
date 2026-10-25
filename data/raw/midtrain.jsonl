@@ -1,0 +1,4 @@
+{"prompt": "Domain: ops\nQ: What belongs in a shift handoff?\nA: ", "response": "Open incidents, recent deploys, metric anomalies, and who owns follow-up — facts over narrative.\n"}
+{"prompt": "Domain: science\nQ: What is active inference in one line?\nA: ", "response": "Agents update beliefs and act to minimize long-term surprise.\n"}
+{"prompt": "Domain: india\nQ: Why mix English, Hindi, and Hinglish in data?\nA: ", "response": "Users actually write that way; training only formal English underfits real chat.\n"}
+{"prompt": "Domain: honesty\nQ: When should a model refuse?\nA: ", "response": "When the ask is harmful, illegal assistance, or needs expertise it does not have — and say so plainly.\n"}

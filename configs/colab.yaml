@@ -1,0 +1,19 @@
+# Colab smoke — like AERIS colab.yaml spirit
+phase: pretrain
+model:
+  vocab_size: 256
+  latent_dim: 64
+  action_dim: 32
+  max_loops: 1
+training:
+  max_steps: 100
+  batch_size: 2
+  learning_rate: 0.001
+  max_seq_len: 64
+  grad_accum: 1
+  precision: fp32
+  log_every: 10
+  save_every: 50
+paths:
+  data_path: data/raw/pretrain.txt
+  output_dir: checkpoints/colab
