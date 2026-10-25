@@ -18,8 +18,8 @@ from cem.core.looped_core import LoopedCore
 class ModelOutput:
     logits: Optional[torch.Tensor] = None
     loss: Optional[torch.Tensor] = None
-    metrics: Dict[str, float] = None
-    state: Dict[str, Any] = None
+    metrics: Optional[Dict[str, float]] = None
+    state: Optional[Dict[str, Any]] = None
 
 class CEM(nn.Module):
     def __init__(
@@ -129,3 +129,6 @@ class CEM(nn.Module):
             if arg is not None:
                 return arg.device
         return torch.device("cpu")
+
+# Back-compat alias (tests/docs may say CEMModel)
+CEMModel = CEM

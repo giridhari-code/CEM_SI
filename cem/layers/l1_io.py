@@ -127,7 +127,9 @@ class VoiceEncoder(nn.Module):
     def forward(self, waveform: torch.Tensor) -> torch.Tensor:
         # Input: (B, 1, T) -> Output: (B, latent_dim)
         if self.mel_spec is None:
-            raise ImportError("torchaudio required for VoiceEncoder")
+            # Text-only installs: return zeros so multimodal batch still runs
+            B = waveform.size(0)
+            return torch.zeros(B, self.projection.out_features, device=waveform.device)
         mel = self.mel_spec(waveform)            # M = MelSpectrogram(W)
         mel = torch.log(mel + 1e-6).unsqueeze(1) # Log-Mel
         

@@ -41,12 +41,14 @@ class TestCEMModel(unittest.TestCase):
         self.assertTrue(output.loss.item() > 0)
 
     def test_forward_pass_inference(self):
-        """Test forward pass without targets (Inference mode)."""
+        """Inference: no targets → still emit logits (chat/generate path)."""
         self.model.eval()
         output = self.model(char_ids=self.char_ids)
         
         self.assertIsInstance(output, ModelOutput)
-        self.assertIsNone(output.logits) # Should be None without targets
+        # Chat/serve path always decodes when char_ids present
+        self.assertIsNotNone(output.logits)
+        self.assertEqual(output.logits.shape, (self.B, self.T, self.vocab_size))
         self.assertIsNone(output.loss)
 
     def test_early_stopping_loop(self):
