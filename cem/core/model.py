@@ -95,16 +95,26 @@ class CEM(nn.Module):
         # 5. Decoding (L1h) — always produce logits for chat/generate
         logits = None
         loss = None
+        final_context = torch.nan_to_num(final_context, nan=0.0, posinf=0.0, neginf=0.0)
         # teacher tokens if training; else use input chars as decode anchors
         decode_tokens = target_tokens if target_tokens is not None else char_ids
         if decode_tokens is not None:
-            logits = self.l1_io.decode_text(final_context, decode_tokens)
+            # Causal teacher forcing: feed tokens[:-1], predict tokens[1:] when T>1
+            if target_tokens is not None and decode_tokens.size(1) > 1:
+                dec_in = decode_tokens[:, :-1]
+                dec_tgt = target_tokens[:, 1:]
+            else:
+                dec_in = decode_tokens
+                dec_tgt = target_tokens
+            logits = self.l1_io.decode_text(final_context, dec_in)
             logits = torch.nan_to_num(logits, nan=0.0, posinf=20.0, neginf=-20.0)
             logits = logits.clamp(-20.0, 20.0)
-            if target_tokens is not None:
+            if dec_tgt is not None:
+                # align lengths
+                T = min(logits.size(1), dec_tgt.size(1))
                 loss = F.cross_entropy(
-                    logits.reshape(-1, self.vocab_size),
-                    target_tokens.reshape(-1).clamp(min=0),
+                    logits[:, :T, :].reshape(-1, self.vocab_size),
+                    dec_tgt[:, :T].reshape(-1).clamp(min=0),
                     ignore_index=-100,
                 )
                 if not torch.isfinite(loss):
@@ -116,7 +126,14 @@ class CEM(nn.Module):
             "self_surprise": float(self_surprise.mean().item())
         }
 
-        return ModelOutput(logits=logits, loss=loss, metrics=metrics, state=state)
+        return ModelOutput(logits=logits, loss=loss, metrics=metrics, state=self._clone_state(state))
+
+
+    def _clone_state(self, state: Dict[str, Any]) -> Dict[str, Any]:
+        out = {}
+        for k, v in state.items():
+            out[k] = v.detach().clone() if torch.is_tensor(v) else v
+        return out
 
     def _get_batch_size(self, *args) -> int:
         for arg in args:

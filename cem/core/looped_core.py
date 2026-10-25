@@ -69,8 +69,12 @@ class LoopedCore(nn.Module):
             action, _ = self.l6_controller(s_next, s_causal)
             state["last_action"] = action
             
-            z_final = s_next # Update state for next loop
-            
+            # Sanitize — one bad op must not freeze the whole train run
+            s_next = torch.nan_to_num(s_next, nan=0.0, posinf=0.0, neginf=0.0)
+            action = torch.nan_to_num(action, nan=0.0, posinf=0.0, neginf=0.0)
+            error = torch.nan_to_num(error, nan=0.0, posinf=1.0, neginf=0.0)
+            z_final = s_next  # Update state for next loop
+
             # --- L7: Meta-Cognition (Should we stop?) ---
             confidence, decision = self.l7_meta(z_final, error)
             

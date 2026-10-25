@@ -136,19 +136,29 @@ class L3PredictiveCoding(nn.Module):
             cross_errors: (B, T)
         """
         B, T, D = z_sequence.shape
-        
-        # 1. Sentence Prediction (Predict next step)
-        # We pass z_t and compare with z_{t+1}
-        z_hat_seq = self.sentence_pred(z_sequence[:, :-1, :]) # (B, T-1, D)
-        actual_next = z_sequence[:, 1:, :]                    # (B, T-1, D)
-        
-        # Error per step: (B, T-1)
-        sentence_errors = F.mse_loss(z_hat_seq, actual_next, reduction='none').mean(dim=-1)
-        
-        # 2. Paragraph Prediction (Sequence-level)
-        p_hat_seq = self.paragraph_pred(z_sequence)           # (B, T, D)
-        # Simplified paragraph error: comparing to next step (or we can do sequence-level)
-        para_errors = F.mse_loss(p_hat_seq[:, :-1], z_sequence[:, 1:], reduction='none').mean(dim=-1)
+
+        # T==1 is common in the looped core (single latent frame). Empty
+        # slices make mse_loss → NaN and freeze training at log(vocab).
+        if T < 2:
+            z_hat = self.sentence_pred(z_sequence)  # (B, 1, D) via Linear on last dim... 
+            # SentencePredictor expects (B, D) or (B, T, D) — Linear applies on last dim
+            if z_sequence.dim() == 3:
+                z_hat = self.sentence_pred(z_sequence.reshape(B * T, D)).reshape(B, T, D)
+            sentence_errors = F.mse_loss(z_hat, z_sequence, reduction="none").mean(dim=-1)
+            p_hat_seq = self.paragraph_pred(z_sequence)
+            para_errors = F.mse_loss(p_hat_seq, z_sequence, reduction="none").mean(dim=-1)
+        else:
+            # 1. Sentence Prediction (Predict next step)
+            z_in = z_sequence[:, :-1, :].reshape(B * (T - 1), D)
+            z_hat_seq = self.sentence_pred(z_in).reshape(B, T - 1, D)
+            actual_next = z_sequence[:, 1:, :]
+            sentence_errors = F.mse_loss(z_hat_seq, actual_next, reduction="none").mean(dim=-1)
+
+            # 2. Paragraph Prediction (Sequence-level)
+            p_hat_seq = self.paragraph_pred(z_sequence)
+            para_errors = F.mse_loss(
+                p_hat_seq[:, :-1], z_sequence[:, 1:], reduction="none"
+            ).mean(dim=-1)
         
         # 3. Cross-Modal Prediction
         cross_errors = torch.zeros(B, T, device=z_sequence.device)
